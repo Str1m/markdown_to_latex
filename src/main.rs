@@ -1,11 +1,10 @@
-mod tokenizer;
 mod file_utils;
+mod latex_converter;
+mod tokenizer;
 
-use std::env;
-use file_utils::read_file_to_string;
+use file_utils::{read_file_to_string, write_to_file};
+use latex_converter::LatexConverter;
 use tokenizer::Tokenizer;
-
-
 
 fn main() {
     let file_path = "data/example.md";
@@ -21,7 +20,9 @@ fn main() {
     let mut tokenizer = Tokenizer::new(&content);
     let tokens = tokenizer.tokenize();
 
-    for token in tokens {
-        println!("{:?}", token);
+    let latex_content = LatexConverter::convert(tokens);
+    match write_to_file(latex_content, "data/output.tex") {
+        Ok(_) => println!("Tex was saved"),
+        Err(e) => println!("Error: {}", e),
     }
 }
